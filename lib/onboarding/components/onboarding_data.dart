@@ -1,16 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/material.dart';
+
+@immutable
 class OnboardingData {
   final String title;
   final String image;
   final String desc;
-  OnboardingData({
+  const OnboardingData({
     required this.title,
     required this.image,
     required this.desc,
   });
 }
 
-List<OnboardingData> onboardigns = [
+List<OnboardingData> onboardigns = const [
   OnboardingData(
     title: "Track Your work and get the result",
     image: "assets/images/image1.png",
