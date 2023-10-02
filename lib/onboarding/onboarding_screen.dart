@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:shopy/onboarding/components/onboarding_data.dart';
+import 'package:shopy/onboarding/components/skip_button.dart';
 import 'package:shopy/utils/size_config.dart';
 
 import 'components/dot.dart';
@@ -29,9 +30,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.initState();
   }
 
-  void _onPageChanged() {
-    //setState(() => _currentPage = _pageController.page!.toInt());
-    print(_pageController.page!.toInt());
+  void _onPageChanged(int value) {
+    setState(() => _currentPage = value);
+    //_pageController.page!.toInt());
   }
 
   @override
@@ -44,92 +45,85 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     SizeConfig2.init(context);
     return Scaffold(
-      backgroundColor: colors[_currentPage],
+      //backgroundColor: colors[_currentPage],
       extendBody: true,
       extendBodyBehindAppBar: true,
       body: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: colors),
+          gradient: LinearGradient(
+            colors: colors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 3,
-              child: PageView.builder(
-                itemCount: onboardigns.length,
-                physics: const BouncingScrollPhysics(),
-                controller: _pageController,
-                onPageChanged: (value) => setState(() => _currentPage = value),
-                itemBuilder: (context, index) => OnboardingCard(
-                  data: onboardigns[index],
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                flex: 3,
+                child: PageView.builder(
+                  itemCount: onboardigns.length,
+                  physics: const BouncingScrollPhysics(),
+                  controller: _pageController,
+                  onPageChanged: (value) => _onPageChanged(value),
+                  itemBuilder: (context, index) => OnboardingCard(
+                    data: onboardigns[index],
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      onboardigns.length,
-                      (index) => Dot(isActive: index == _currentPage),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        onboardigns.length,
+                        (index) => Dot(isActive: index == _currentPage),
+                      ),
                     ),
-                  ),
-                  _currentPage + 1 == onboardigns.length
-                      ? OnboardingElevatedButton(
-                          title: 'START',
-                          onPressed: () {},
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.all(30.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  // setState(
-                                  //   () => _currentPage = onboardigns.length,
-                                  // );
-                                  // _currentPage = onboardigns.length;
-                                  _onPageChanged();
-                                  _pageController
-                                      .jumpToPage(onboardigns.length);
-                                },
-                                style: TextButton.styleFrom(
-                                  elevation: 0,
-                                  textStyle: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize:
-                                        (SizeConfig2.screenW! <= 550) ? 13 : 17,
-                                  ),
+                    _currentPage + 1 == onboardigns.length
+                        ? OnboardingElevatedButton(
+                            title: 'START',
+                            onPressed: () {},
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(30.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SkipButton(
+                                  onPressed: _skip,
                                 ),
-                                child: const Text(
-                                  "SKIP",
-                                  style: TextStyle(color: Colors.black),
+                                OnboardingElevatedButton(
+                                  title: 'NEXT',
+                                  isNext: true,
+                                  onPressed: _next,
                                 ),
-                              ),
-                              OnboardingElevatedButton(
-                                title: 'NEXT',
-                                isNext: true,
-                                onPressed: () {
-                                  setState(() => _currentPage++);
-                                  _pageController.nextPage(
-                                    duration: const Duration(microseconds: 200),
-                                    curve: Curves.easeIn,
-                                  );
-                                },
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  void _skip() {
+    _onPageChanged(onboardigns.length);
+    _pageController.jumpToPage(onboardigns.length);
+  }
+
+  void _next() {
+    setState(() => _currentPage++);
+    _pageController.nextPage(
+      duration: const Duration(microseconds: 200),
+      curve: Curves.easeIn,
     );
   }
 }

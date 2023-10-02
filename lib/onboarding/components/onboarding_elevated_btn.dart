@@ -34,9 +34,13 @@ class OnboardingElevatedButton extends StatelessWidget {
                 ),
           textStyle: TextStyle(
             fontSize: (SizeConfig2.screenW! <= 550) ? 13 : 17,
+            color: Colors.white,
           ),
         ),
-        child: Text(title),
+        child: Text(
+          title,
+          style: const TextStyle(color: Colors.white),
+        ),
       ),
     );
   }
