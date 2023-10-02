@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:shopy/onboarding/components/onboarding_data.dart';
 import 'package:shopy/utils/size_config.dart';
 
+import 'components/dot.dart';
+import 'components/onboarding_card.dart';
+import 'components/onboarding_elevated_btn.dart';
+
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -23,6 +27,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void initState() {
     _pageController = PageController();
     super.initState();
+  }
+
+  void _onPageChanged() {
+    //setState(() => _currentPage = _pageController.page!.toInt());
+    print(_pageController.page!.toInt());
   }
 
   @override
@@ -80,9 +89,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  _pageController.jumpToPage(2);
-                                  setState(
-                                      () => _currentPage = onboardigns.length);
+                                  // setState(
+                                  //   () => _currentPage = onboardigns.length,
+                                  // );
+                                  // _currentPage = onboardigns.length;
+                                  _onPageChanged();
+                                  _pageController
+                                      .jumpToPage(onboardigns.length);
                                 },
                                 style: TextButton.styleFrom(
                                   elevation: 0,
@@ -117,112 +130,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class OnboardingElevatedButton extends StatelessWidget {
-  const OnboardingElevatedButton({
-    Key? key,
-    required this.title,
-    required this.onPressed,
-    this.isNext = false,
-  }) : super(key: key);
-  final String title;
-  final VoidCallback onPressed;
-  final bool isNext;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(30.0),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          elevation: 0,
-          backgroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-          padding: (SizeConfig2.screenW! <= 550)
-              ? EdgeInsets.symmetric(
-                  horizontal: isNext ? 30 : 100,
-                  vertical: 20,
-                )
-              : EdgeInsets.symmetric(
-                  horizontal: isNext ? 30 : SizeConfig2.screenW! * 0.2,
-                  vertical: 25,
-                ),
-          textStyle: TextStyle(
-            fontSize: (SizeConfig2.screenW! <= 550) ? 13 : 17,
-          ),
-        ),
-        child: Text(title),
-      ),
-    );
-  }
-}
-
-class OnboardingCard extends StatelessWidget {
-  const OnboardingCard({
-    Key? key,
-    required this.data,
-  }) : super(key: key);
-  final OnboardingData data;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(40.0),
-      child: Column(
-        children: [
-          Image.asset(
-            data.image,
-            height: SizeConfig2.blockV! * 35.0,
-          ),
-          SizedBox(height: (SizeConfig2.screenH! >= 850) ? 60 : 30),
-          Text(
-            data.title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Mulish',
-              fontSize: (SizeConfig2.screenW! >= 550) ? 35 : 30,
-            ),
-          ),
-          const SizedBox(height: 15),
-          Text(
-            data.desc,
-            style: TextStyle(
-              fontFamily: "Mulish",
-              fontWeight: FontWeight.w300,
-              fontSize: (SizeConfig2.screenW! >= 550) ? 25 : 17,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class Dot extends StatelessWidget {
-  const Dot({super.key, required this.isActive});
-  final bool isActive;
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeIn,
-      height: 10.0,
-      width: isActive ? 20.0 : 10.0,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(
-          Radius.circular(50.0),
-        ),
-        color: Color(0xFF000000),
-      ),
-      margin: const EdgeInsets.only(right: 5.0),
     );
   }
 }
