@@ -8,6 +8,7 @@ class SizeConfig {
   static late double defaultSize;
   static late Orientation orientation;
 
+  // ignore: unused_element
   void _init(BuildContext context) {
     _mediaQueryData = MediaQuery.of(context);
     screenHeight = _mediaQueryData.size.height;
