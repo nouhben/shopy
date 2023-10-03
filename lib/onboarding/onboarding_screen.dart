@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shopy/onboarding/components/onboarding_data.dart';
 import 'package:shopy/onboarding/components/skip_button.dart';
-import 'package:shopy/utils/constants.dart';
+import 'package:shopy/utils/constants/constants.dart';
 import 'package:shopy/utils/size_config.dart';
 
 import 'components/dot.dart';

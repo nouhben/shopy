@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:shopy/utils/assets/icons.dart';
-import 'package:shopy/utils/size_config.dart';
+import 'package:shopy/utils/constants/config/size_config.dart';
 
 class OnboardingElevatedButton extends StatelessWidget {
   const OnboardingElevatedButton({
@@ -51,10 +49,15 @@ class OnboardingElevatedButton extends StatelessWidget {
                 style: const TextStyle(color: Colors.white),
               ),
               const SizedBox(width: 8.0),
-              SvgPicture.asset(
-                CustomIcons.rightLongArrow.path,
-                width: (SizeConfig2.screenW! <= 400) ? 36 : 48.0,
+              // SvgPicture.asset(
+              //   CustomIcons.rightLongArrow.path,
+              //   width: (SizeConfig2.screenW! <= 400) ? 36 : 48.0,
+              //   color: Colors.white,
+              // ),
+              const Icon(
+                Icons.arrow_forward_ios_sharp,
                 color: Colors.white,
+                size: 36.0,
               ),
             ],
           ),

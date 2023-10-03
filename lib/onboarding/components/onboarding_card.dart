@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shopy/utils/size_config.dart';
+import 'package:shopy/utils/constants/config/size_config.dart';
 
 import 'onboarding_data.dart';
 
@@ -18,6 +18,7 @@ class OnboardingCard extends StatelessWidget {
           Image.asset(
             data.image,
             height: SizeConfig2.blockV! * 35.0,
+            fit: BoxFit.cover,
           ),
           SizedBox(height: (SizeConfig2.screenH! >= 850) ? 60 : 30),
           Text(

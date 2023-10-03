@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shopy/onboarding/components/get_started.dart';
+// ignore: unused_import
 import 'package:shopy/onboarding/onboarding_screen.dart';
 
 void main() {
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const OnboardingScreen(),
+      home: const GetStarted(), //OnboardingScreen(),
     );
   }
 }
