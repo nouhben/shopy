@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:shopy/onboarding/components/onboarding_data.dart';
 import 'package:shopy/onboarding/components/skip_button.dart';
+import 'package:shopy/utils/constants.dart';
 import 'package:shopy/utils/size_config.dart';
 
 import 'components/dot.dart';
@@ -49,12 +50,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       extendBody: true,
       extendBodyBehindAppBar: true,
       body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: colors,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+        decoration: const BoxDecoration(
+          gradient: kSecondaryGradientColor,
         ),
         child: SafeArea(
           child: Column(

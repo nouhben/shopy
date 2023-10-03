@@ -16,10 +16,11 @@ const kSecondaryGradientColor = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [
-    Color(0xFFd7f0fe),
+    Color.fromARGB(255, 188, 221, 241),
     Color(0xFFeff8fe),
     Color(0xFFf4efda),
     Color(0xFFfafcf9),
+    Color.fromARGB(255, 163, 223, 133),
   ],
 );
 // LinearGradient
