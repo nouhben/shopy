@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../colors.dart';
+import 'colors.dart';
 import 'text_styles.dart';
 
 class AppThemeData {
@@ -11,6 +11,7 @@ class AppThemeData {
 
   static ThemeData themeData(ColorScheme colorScheme, Color focusColor) {
     return ThemeData(
+      useMaterial3: true,
       colorScheme: colorScheme,
       textTheme: _textTheme,
       iconTheme: IconThemeData(color: colorScheme.secondary, size: 24),
@@ -31,7 +32,7 @@ class AppThemeData {
           shadowColor: AppColors.c303030,
           backgroundColor: AppColors.c303030,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(50),
           ),
           minimumSize: const Size(300, 50),
         ),

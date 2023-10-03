@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shopy/onboarding/components/onboarding_data.dart';
-import 'package:shopy/utils/constants/strings.dart';
+
+import '../../utils/strings.dart';
 
 class GetStarted extends StatelessWidget {
   const GetStarted({super.key});

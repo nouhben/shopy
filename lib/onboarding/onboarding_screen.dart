@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'package:shopy/onboarding/components/onboarding_data.dart';
 import 'package:shopy/onboarding/components/skip_button.dart';
-import 'package:shopy/utils/constants/constants.dart';
-import 'package:shopy/utils/size_config.dart';
 
+import '../utils/config/size_config.dart';
+import '../utils/theme/constants.dart';
 import 'components/dot.dart';
 import 'components/onboarding_card.dart';
 import 'components/onboarding_elevated_btn.dart';
@@ -20,11 +20,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   late PageController _pageController;
   int _currentPage = 0;
-  final List<Color> colors = const [
-    Color(0xffDAD3C8),
-    Color(0xffFFE5DE),
-    Color(0xffDCF6E6),
-  ];
+
   @override
   void initState() {
     _pageController = PageController();

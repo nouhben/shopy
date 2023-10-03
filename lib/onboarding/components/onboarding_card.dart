@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shopy/utils/constants/config/size_config.dart';
 
+import '../../utils/config/size_config.dart';
 import 'onboarding_data.dart';
 
 class OnboardingCard extends StatelessWidget {
