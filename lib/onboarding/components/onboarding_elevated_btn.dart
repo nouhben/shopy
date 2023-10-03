@@ -43,12 +43,9 @@ class OnboardingElevatedButton extends StatelessWidget {
             ),
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: const TextStyle(color: Colors.white),
-              ),
+              Text(title),
               const SizedBox(width: 8.0),
               // SvgPicture.asset(
               //   CustomIcons.rightLongArrow.path,
@@ -56,7 +53,7 @@ class OnboardingElevatedButton extends StatelessWidget {
               //   color: Colors.white,
               // ),
               const Icon(
-                Icons.arrow_forward_ios_sharp,
+                Icons.arrow_forward,
                 color: Colors.white,
                 size: 36.0,
               ),
