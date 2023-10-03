@@ -28,12 +28,18 @@ class GetStarted extends StatelessWidget {
               const SizedBox(height: 36.0),
               Text(
                 CustomStrings.make.text,
-                style: Theme.of(context).textTheme.labelLarge,
+                style: Theme.of(context)
+                    .textTheme
+                    .displayLarge!
+                    .copyWith(color: Colors.black),
               ),
               const SizedBox(height: 16.0),
               Text(
                 CustomStrings.home.text,
-                style: Theme.of(context).textTheme.labelLarge,
+                style: Theme.of(context)
+                    .textTheme
+                    .displayMedium!
+                    .copyWith(color: Colors.black54),
               ),
             ],
           ),

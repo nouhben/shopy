@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:shopy/onboarding/components/get_started.dart';
 
 import 'package:shopy/onboarding/components/onboarding_data.dart';
 import 'package:shopy/onboarding/components/skip_button.dart';
@@ -79,7 +80,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _currentPage + 1 == onboardigns.length
                         ? OnboardingElevatedButton(
                             title: 'START',
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const GetStarted(),
+                                ),
+                              );
+                            },
                           )
                         : Padding(
                             padding: const EdgeInsets.all(30.0),
