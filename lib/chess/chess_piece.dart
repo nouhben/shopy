@@ -12,6 +12,8 @@ enum ChessPieceType {
   final String imagePath;
 }
 
+enum Direction { up, down }
+
 class ChessPiece {
   final ChessPieceType type;
   final Color color;
