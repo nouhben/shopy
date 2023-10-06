@@ -44,6 +44,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/fonts/
+    - lib/chess/icons/
 
   fonts:
     - family: Mulish

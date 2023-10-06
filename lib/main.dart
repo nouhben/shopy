@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shopy/onboarding/onboarding_screen.dart';
 
+import 'chess/chess_board.dart';
 import 'utils/theme/app_theme.dart';
 
 void main() {
@@ -16,7 +17,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Shop App',
       theme: AppThemeData.lightThemeData,
-      home: const OnboardingScreen(),
+      home: FutureBuilder(
+        future: Future.delayed(const Duration(seconds: 5)),
+        builder: (context, snapshot) => const ChessBoard(),
+      ), //const OnboardingScreen(),
     );
   }
 }
