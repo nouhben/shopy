@@ -21,26 +21,53 @@ class Square extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color? squarColor;
+    Color? squarColor = isWhite ? forgroundColor : backgroundColor;
     if (isSelected) {
+      squarColor = selectedSquarColor;
+    }
+    /**
+     *   if (isSelected) {
       squarColor = selectedSquarColor;
     } else if (isValidMove) {
       squarColor = validMoveColor;
     } else {
       squarColor = isWhite ? forgroundColor : backgroundColor;
     }
+     */
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        color: squarColor,
-        padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0),
-        child: piece != null
-            ? Image.asset(
-                piece!.imagePath,
-                color: piece!.color,
-                fit: BoxFit.contain,
-              )
-            : null,
+      child: Stack(
+        children: [
+          Container(
+            color: squarColor,
+            padding: const EdgeInsets.all(8.0),
+            child: piece != null
+                ? Center(
+                    child: Image.asset(
+                      piece!.imagePath,
+                      color: piece!.color,
+                    ),
+                  )
+                : null,
+          ),
+          if (isValidMove) const Center(child: ValidMoveDot()),
+        ],
+      ),
+    );
+  }
+}
+
+class ValidMoveDot extends StatelessWidget {
+  const ValidMoveDot({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 24.0,
+      height: 24.0,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: validMoveColor,
       ),
     );
   }
