@@ -26,31 +26,54 @@ class _ChessBoardState extends State<ChessBoard> {
     _board = initBorad();
   }
 
+  // void _selectPiece(int row, int col) {
+  //   if (_board[row][col] != null) {
+  //     if (_selectedPiece != _board[row][col]) {
+  //       setState(() {
+  //         _selectedPiece = _board[row][col];
+  //         _selectedRow = row;
+  //         _selectedColumn = col;
+  //       });
+  //       _validMoves = _calculateRawValidMoves(
+  //         _selectedRow,
+  //         _selectedColumn,
+  //         _selectedPiece,
+  //       );
+  //     } else {
+  //       setState(() {
+  //         _selectedPiece = null;
+  //         _selectedRow = -1;
+  //         _selectedColumn = -1;
+  //         _validMoves = [];
+  //       });
+  //     }
+  //   } else if (_selectedPiece != null &&
+  //       _validMoves.any((e) => row == e[0] && col == e[1])) {
+  //     _movePiece(row, col);
+  //   }
+  // }
   void _selectPiece(int row, int col) {
-    if (_board[row][col] != null) {
-      if (_selectedPiece != _board[row][col]) {
-        setState(() {
-          _selectedPiece = _board[row][col];
-          _selectedRow = row;
-          _selectedColumn = col;
-        });
-        _validMoves = _calculateRawValidMoves(
-          _selectedRow,
-          _selectedColumn,
-          _selectedPiece,
-        );
-      } else {
-        setState(() {
-          _selectedPiece = null;
-          _selectedRow = -1;
-          _selectedColumn = -1;
-          _validMoves = [];
-        });
+    setState(() {
+      // no piece ha been selected yet, this is the first selection
+      if (_selectedPiece == null && _board[row][col] != null) {
+        _selectedPiece = _board[row][col];
+        _selectedRow = row;
+        _selectedColumn = col;
+      } else if (_board[row][col] != null &&
+          _board[row][col]!.isWhite == _selectedPiece!.isWhite) {
+        _selectedPiece = _board[row][col];
+        _selectedRow = row;
+        _selectedColumn = col;
+      } else if (_selectedPiece != null &&
+          _validMoves.any((e) => row == e[0] && col == e[1])) {
+        _movePiece(row, col);
       }
-    } else if (_selectedPiece != null &&
-        _validMoves.any((e) => row == e[0] && col == e[1])) {
-      _movePiece(row, col);
-    }
+      _validMoves = _calculateRawValidMoves(
+        _selectedRow,
+        _selectedColumn,
+        _selectedPiece,
+      );
+    });
   }
 
   List<List<int>> _validMoves = [];
