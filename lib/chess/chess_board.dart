@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:shopy/chess/captured_piece.dart';
 import 'package:shopy/chess/chess_piece.dart';
 
 import 'package:shopy/chess/square.dart';
@@ -15,11 +16,15 @@ class ChessBoard extends StatefulWidget {
 
 class _ChessBoardState extends State<ChessBoard> {
   late List<List<ChessPiece?>> _board;
-
+  List<ChessPiece> whitePiecesTaken = [];
+  List<ChessPiece> blackPiecesTaken = [];
   ChessPiece? _selectedPiece;
   int _selectedRow = -1;
   int _selectedColumn = -1;
-
+  bool _isWhiteTurn = true;
+  List<int> whiteKingPostion = [7, 4];
+  List<int> blackKingPostion = [0, 4];
+  bool checkStatus = false;
   @override
   void initState() {
     super.initState();
@@ -56,9 +61,11 @@ class _ChessBoardState extends State<ChessBoard> {
     setState(() {
       // no piece ha been selected yet, this is the first selection
       if (_selectedPiece == null && _board[row][col] != null) {
-        _selectedPiece = _board[row][col];
-        _selectedRow = row;
-        _selectedColumn = col;
+        if (_board[row][col]!.isWhite == _isWhiteTurn) {
+          _selectedPiece = _board[row][col];
+          _selectedRow = row;
+          _selectedColumn = col;
+        }
       } else if (_board[row][col] != null &&
           _board[row][col]!.isWhite == _selectedPiece!.isWhite) {
         _selectedPiece = _board[row][col];
@@ -117,15 +124,51 @@ class _ChessBoardState extends State<ChessBoard> {
   }
 
   void _movePiece(int newRow, int newCol) {
+    // check if we caputer an enemy piece
+    if (_board[newRow][newCol] != null) {
+      var caputerdPiece = _board[newRow][newCol];
+      caputerdPiece!.isWhite
+          ? whitePiecesTaken.add(caputerdPiece)
+          : blackPiecesTaken.add(caputerdPiece);
+    }
     // move piece to new row  and column and clear the old square then init the selcted data
     _board[newRow][newCol] = _selectedPiece;
     _board[_selectedRow][_selectedColumn] = null;
+
+    // check if any of the kings ia under attack
+    if (isKingInCheck(!_isWhiteTurn)) {
+      checkStatus = true;
+    } else {
+      checkStatus = false;
+    }
     setState(() {
       _selectedRow = -1;
       _selectedColumn = -1;
       _selectedPiece = null;
       _validMoves = [];
     });
+    //Change turns
+    _isWhiteTurn = !_isWhiteTurn;
+  }
+
+  bool isKingInCheck(bool isWhiteKing) {
+    List<int> kingPosition = isWhiteKing ? whiteKingPostion : blackKingPostion;
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        // skipp the empty square and the pieces that have the same color
+        if (_board[i][j] == null || _board[i][j]!.isWhite == isWhiteKing) {
+          continue;
+        }
+        List<List<int>> validMoves =
+            _calculateRawValidMoves(i, j, _board[i][j]);
+        for (var move in validMoves) {
+          if (kingPosition[0] == move[0] && kingPosition[1] == move[1]) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   void _moveKing(
@@ -340,31 +383,63 @@ class _ChessBoardState extends State<ChessBoard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey,
-      body: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 8,
-        ),
-        itemCount: 8 * 8,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          int row = index ~/ 8;
-          int column = index % 8;
-          final piece = _board[row][column];
-          bool isValidMove = false;
-          for (var position in _validMoves) {
-            if (position[0] == row && position[1] == column) {
-              isValidMove = true;
-              break;
-            }
-          }
-          return Square(
-            isWhite: isSquareWhite(index),
-            piece: piece,
-            isValidMove: isValidMove, //_validMoves.contains([row, column]),
-            isSelected: _selectedRow == row && _selectedColumn == column,
-            onTap: () => _selectPiece(row, column),
-          );
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 8,
+              ),
+              itemCount: whitePiecesTaken.length,
+              itemBuilder: (context, index) => CapturedPiece(
+                piece: whitePiecesTaken[index],
+              ),
+            ),
+          ),
+          //Diplay Check Status
+          if (checkStatus) const Text('CHECK!!'),
+          Expanded(
+            flex: 3,
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 8,
+              ),
+              itemCount: 8 * 8,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                int row = index ~/ 8;
+                int column = index % 8;
+                final piece = _board[row][column];
+                bool isValidMove = false;
+                for (var position in _validMoves) {
+                  if (position[0] == row && position[1] == column) {
+                    isValidMove = true;
+                    break;
+                  }
+                }
+                return Square(
+                  isWhite: isSquareWhite(index),
+                  piece: piece,
+                  isValidMove:
+                      isValidMove, //_validMoves.contains([row, column]),
+                  isSelected: _selectedRow == row && _selectedColumn == column,
+                  onTap: () => _selectPiece(row, column),
+                );
+              },
+            ),
+          ),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 8,
+              ),
+              itemCount: blackPiecesTaken.length,
+              itemBuilder: (context, index) => CapturedPiece(
+                piece: blackPiecesTaken[index],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

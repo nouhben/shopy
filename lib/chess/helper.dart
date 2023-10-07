@@ -39,7 +39,7 @@ void _initQueens(List<List<ChessPiece?>> newBoard) {
     imagePath: ChessPieceType.queen.imagePath,
     isWhite: false,
   );
-  newBoard[7][4] = ChessPiece(
+  newBoard[7][3] = ChessPiece(
     type: ChessPieceType.queen,
     color: Colors.white,
     imagePath: ChessPieceType.queen.imagePath,
@@ -54,7 +54,7 @@ void _initKings(List<List<ChessPiece?>> newBoard) {
     imagePath: ChessPieceType.king.imagePath,
     isWhite: false,
   );
-  newBoard[7][3] = ChessPiece(
+  newBoard[7][4] = ChessPiece(
     type: ChessPieceType.king,
     color: Colors.white,
     imagePath: ChessPieceType.king.imagePath,
