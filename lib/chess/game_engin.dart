@@ -1,23 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
-import 'package:flutter/material.dart';
-import 'package:shopy/chess/captured_piece.dart';
-import 'package:shopy/chess/chess_piece.dart';
-
-import 'package:shopy/chess/square.dart';
-
-import 'game_engin.dart';
+import 'chess_piece.dart';
 import 'helper.dart';
 
-class ChessBoard extends StatefulWidget {
-  const ChessBoard({super.key});
-
-  @override
-  State<ChessBoard> createState() => _ChessBoardState();
-}
-
-class _ChessBoardState extends State<ChessBoard> {
-  late GameEngine game;
+class GameEngine {
   late List<List<ChessPiece?>> _board;
   List<List<int>> _validMoves = [];
   List<ChessPiece> _whitePiecesTaken = [];
@@ -29,45 +13,6 @@ class _ChessBoardState extends State<ChessBoard> {
   List<int> whiteKingPostion = [7, 4];
   List<int> blackKingPostion = [0, 4];
   bool checkStatus = false;
-  @override
-  void initState() {
-    super.initState();
-    _board = initBorad();
-    game = GameEngine();
-  }
-
-  // void _selectPiece(int row, int col) {
-  //   if (_board[row][col] != null) {
-  //     if (_selectedPiece != _board[row][col]) {
-  //       setState(() {
-  //         _selectedPiece = _board[row][col];
-  //         _selectedRow = row;
-  //         _selectedColumn = col;
-  //       });
-  //       _validMoves = _calculateRawValidMoves(
-  //         _selectedRow,
-  //         _selectedColumn,
-  //         _selectedPiece,
-  //       );
-  //     } else {
-  //       setState(() {
-  //         _selectedPiece = null;
-  //         _selectedRow = -1;
-  //         _selectedColumn = -1;
-  //         _validMoves = [];
-  //       });
-  //     }
-  //   } else if (_selectedPiece != null &&
-  //       _validMoves.any((e) => row == e[0] && col == e[1])) {
-  //     _movePiece(row, col);
-  //   }
-  // }
-  void _selectPiece(int row, int col) {
-    setState(() {
-      // no piece ha been selected yet, this is the first selection
-      selectPiece(row, col);
-    });
-  }
 
   void selectPiece(int row, int col) {
     // no piece ha been selected yet, this is the first selection
@@ -89,7 +34,7 @@ class _ChessBoardState extends State<ChessBoard> {
     // if there is a selected piece and player taps on a square that is a valid move, move the piece to that square
     else if (_selectedPiece != null &&
         _validMoves.any((e) => row == e[0] && col == e[1])) {
-      _movePiece(row, col);
+      movePiece(row, col);
     }
     // if a piece is selceted, calcutate its valid moves
     _validMoves = calculateRealValidMoves(
@@ -190,7 +135,7 @@ class _ChessBoardState extends State<ChessBoard> {
     _board[endRow][endCol] = piece;
     _board[startRow][startCol] = null;
     // check if our own king is under attack
-    bool isKingUnderCheck = _isKingInCheck(piece.isWhite);
+    bool isKingUnderCheck = isKingInCheck(piece.isWhite);
     // restore the board to original state
 
     _board[startRow][startCol] = piece;
@@ -206,19 +151,6 @@ class _ChessBoardState extends State<ChessBoard> {
     }
     // if king is in check then not a safe move
     return !isKingUnderCheck;
-  }
-
-  void _movePiece(int newRow, int newCol) {
-    // check if we caputer an enemy piece == the new spot has an enmy piece
-    movePiece(newRow, newCol);
-    setState(() {
-      _selectedRow = -1;
-      _selectedColumn = -1;
-      _selectedPiece = null;
-      _validMoves = [];
-    });
-    //Change turns
-    _isWhiteTurn = !_isWhiteTurn;
   }
 
   void movePiece(int newRow, int newCol) {
@@ -245,14 +177,14 @@ class _ChessBoardState extends State<ChessBoard> {
     _board[_selectedRow][_selectedColumn] = null;
 
     // check if any of the kings ia under attack
-    if (_isKingInCheck(!_isWhiteTurn)) {
+    if (isKingInCheck(!_isWhiteTurn)) {
       checkStatus = true;
     } else {
       checkStatus = false;
     }
   }
 
-  bool _isKingInCheck(bool isWhiteKing) {
+  bool isKingInCheck(bool isWhiteKing) {
     List<int> kingPosition = isWhiteKing ? whiteKingPostion : blackKingPostion;
     // check if any enemy piece can attack the king
     for (int i = 0; i < 8; i++) {
@@ -295,7 +227,6 @@ class _ChessBoardState extends State<ChessBoard> {
         }
         if (_board[newRow][newCol] != null) {
           // kill the piece
-          //TODO: this has to be redone after because king can be cheched
           if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
             candidateMoves.add([newRow, newCol]);
           }
@@ -479,70 +410,5 @@ class _ChessBoardState extends State<ChessBoard> {
         }
       }
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey,
-      body: Column(
-        children: [
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 8,
-              ),
-              itemCount: _whitePiecesTaken.length,
-              itemBuilder: (context, index) => CapturedPiece(
-                piece: _whitePiecesTaken[index],
-              ),
-            ),
-          ),
-          //Diplay Check Status
-          if (checkStatus) const Text('CHECK!!'),
-          Expanded(
-            flex: 3,
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 8,
-              ),
-              itemCount: 8 * 8,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                int row = index ~/ 8;
-                int column = index % 8;
-                final piece = _board[row][column];
-                bool isValidMove = false;
-                for (var position in _validMoves) {
-                  if (position[0] == row && position[1] == column) {
-                    isValidMove = true;
-                    break;
-                  }
-                }
-                return Square(
-                  isWhite: isSquareWhite(index),
-                  piece: piece,
-                  isValidMove:
-                      isValidMove, //_validMoves.contains([row, column]),
-                  isSelected: _selectedRow == row && _selectedColumn == column,
-                  onTap: () => _selectPiece(row, column),
-                );
-              },
-            ),
-          ),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 8,
-              ),
-              itemCount: _blackPiecesTaken.length,
-              itemBuilder: (context, index) => CapturedPiece(
-                piece: _blackPiecesTaken[index],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
