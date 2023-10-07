@@ -67,140 +67,233 @@ class _ChessBoardState extends State<ChessBoard> {
       case ChessPieceType.pawne:
 
         // PAWns can move one square forward
-        if (isInBoard(row + direction, col) &&
-            _board[row + direction][col] == null) {
-          candidateMoves.add([row + direction, col]);
-        }
-        // pawns can move 2 square forward if they are at initial position 6th row for black and 2nd row for whites
-        if ((row == 1 && !piece.isWhite) || (row == 6 && piece.isWhite)) {
-          if (isInBoard(row + 2 * direction, col) &&
-              _board[row + direction][col] == null &&
-              _board[row + 2 * direction][col] == null) {
-            candidateMoves.add([row + 2 * direction, col]);
-          }
-        }
-        // PAWNS can kill diagonally and take the space
-        if (isInBoard(row + direction, col + 1) &&
-            (_board[row + direction][col + 1] != null)) {
-          // take over the squar at that position
-          candidateMoves.add([row + direction, col + 1]);
-        }
-        if (isInBoard(row + direction, col - 1) &&
-            (_board[row + direction][col - 1] != null)) {
-          // take over the squar at that position
-          candidateMoves.add([row + direction, col - 1]);
-        }
+        _movePawn(row, direction, col, candidateMoves, piece);
         break;
 
       case ChessPieceType.bishop:
-        {
-          const directions = [
-            [-1, -1], //up left
-            [-1, 1], //up right
-            [1, -1], //down left
-            [1, -1], //down right
-          ];
-          for (var direction in directions) {
-            int i = 1;
-            while (true) {
-              int newRow = row + i * direction[0];
-              int newCol = col + i * direction[1];
-
-              if (!isInBoard(newRow, newCol)) {
-                break;
-              }
-              if (_board[newRow][newCol] != null) {
-                if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
-                  // kill the piece of the  opponent
-                  candidateMoves.add([newRow, newCol]);
-                  break;
-                } else {
-                  // my own piece is blocking the rook because its the same color
-                  break;
-                }
-              } else {
-                candidateMoves.add([newRow, newCol]);
-              }
-
-              i++;
-            }
-          }
-        }
+        _moveBishop(row, col, piece, candidateMoves);
         break;
       case ChessPieceType.rook:
-        {
-          const directions = [
-            //up
-            [-1, 0],
-            //down
-            [1, 0],
-            //left
-            [0, -1],
-            //right
-            [0, 1],
-          ];
-          for (var direction in directions) {
-            int i = 1;
-            while (true) {
-              int newRow = row + i * direction[0];
-              int newCol = col + i * direction[1];
-
-              if (!isInBoard(newRow, newCol)) {
-                break;
-              }
-              if (_board[newRow][newCol] != null) {
-                if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
-                  // kill the piece of the  opponent
-                  candidateMoves.add([newRow, newCol]);
-                } else {
-                  // my own piece is blocking the rook because its the same color
-                  break;
-                }
-              } else {
-                candidateMoves.add([newRow, newCol]);
-              }
-
-              i++;
-            }
-          }
-        }
+        _moveRook(row, col, piece, candidateMoves);
         break;
       case ChessPieceType.king:
+        _moveKing(row, col, piece, candidateMoves);
         break;
       case ChessPieceType.queen:
+        _moveQueen(row, col, piece, candidateMoves);
         break;
       case ChessPieceType.knight:
-        const knightMoves = [
-          [-2, -1], // up 2 left 1
-          [-2, 1], // up 2 right 1
-          [-1, -2], // up 1 left 2
-          [-1, 2], // up 1 right 2
-
-          [1, -2], // down 1 left 2
-          [1, 2], // down 1 right 2
-          [2, -1], // down 2 left 1
-          [2, 1], // down 2 right 1
-        ];
-        for (var knightMove in knightMoves) {
-          int newRow = row + knightMove[0];
-          int newCol = col + knightMove[1];
-          if (!isInBoard(newRow, newCol)) {
-            continue;
-          }
-          if (_board[newRow][newCol] != null) {
-            if (piece.isWhite != _board[newRow][newCol]!.isWhite) {
-              // kill the piece
-              candidateMoves.add([newRow, newCol]);
-            }
-            continue;
-          }
-          candidateMoves.add([newRow, newCol]);
-        }
-
+        _moveKnight(row, col, piece, candidateMoves);
         break;
       default:
     }
     return candidateMoves;
+  }
+
+  void _moveKing(
+      int row, int col, ChessPiece piece, List<List<int>> candidateMoves) {
+    {
+      const directions = [
+        [-1, 0], //up
+        [1, 0], //down
+        [0, -1], //left
+        [0, 1], //right
+        [-1, -1], // up left
+        [-1, 1], //up right
+        [1, -1], //down left
+        [1, 1], //down right
+      ];
+      for (var direction in directions) {
+        int newRow = row + direction[0];
+        int newCol = col + direction[1];
+
+        if (!isInBoard(newRow, newCol)) {
+          continue;
+        }
+        if (_board[newRow][newCol] != null) {
+          // kill the piece
+          //TODO: this has to be redone after because king can be cheched
+          if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
+            candidateMoves.add([newRow, newCol]);
+          }
+          continue; // blocked by own piece
+        }
+        candidateMoves.add([newRow, newCol]);
+      }
+    }
+  }
+
+  void _moveRook(
+      int row, int col, ChessPiece piece, List<List<int>> candidateMoves) {
+    {
+      const directions = [
+        //up
+        [-1, 0],
+        //down
+        [1, 0],
+        //left
+        [0, -1],
+        //right
+        [0, 1],
+      ];
+      for (var direction in directions) {
+        int i = 1;
+        while (true) {
+          int newRow = row + i * direction[0];
+          int newCol = col + i * direction[1];
+
+          if (!isInBoard(newRow, newCol)) {
+            break;
+          }
+          if (_board[newRow][newCol] != null) {
+            if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
+              // kill the piece of the  opponent
+              candidateMoves.add([newRow, newCol]);
+            } else {
+              // my own piece is blocking the rook because its the same color
+              break;
+            }
+          } else {
+            candidateMoves.add([newRow, newCol]);
+          }
+
+          i++;
+        }
+      }
+    }
+  }
+
+  void _moveQueen(
+      int row, int col, ChessPiece piece, List<List<int>> candidateMoves) {
+    {
+      const directions = [
+        [-1, 0], //up
+        [1, 0], //down
+        [0, -1], //left
+        [0, 1], //right
+        [-1, -1], // up left
+        [-1, 1], //up right
+        [1, -1], //down left
+        [1, 1], //down right
+      ];
+      for (var direction in directions) {
+        int i = 1;
+        while (true) {
+          int newRow = row + i * direction[0];
+          int newCol = col + i * direction[1];
+          if (!isInBoard(newRow, newCol)) {
+            break;
+          }
+          if (_board[newRow][newCol] != null) {
+            if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
+              // kill move
+              candidateMoves.add([newRow, newCol]);
+              break;
+            } else {
+              break;
+            }
+          } else {
+            candidateMoves.add([newRow, newCol]);
+          }
+          i++;
+        }
+      }
+    }
+  }
+
+  void _moveKnight(
+      int row, int col, ChessPiece piece, List<List<int>> candidateMoves) {
+    const knightMoves = [
+      [-2, -1], // up 2 left 1
+      [-2, 1], // up 2 right 1
+      [-1, -2], // up 1 left 2
+      [-1, 2], // up 1 right 2
+
+      [1, -2], // down 1 left 2
+      [1, 2], // down 1 right 2
+      [2, -1], // down 2 left 1
+      [2, 1], // down 2 right 1
+    ];
+    for (var knightMove in knightMoves) {
+      int newRow = row + knightMove[0];
+      int newCol = col + knightMove[1];
+      if (!isInBoard(newRow, newCol)) {
+        continue;
+      }
+      if (_board[newRow][newCol] != null) {
+        if (piece.isWhite != _board[newRow][newCol]!.isWhite) {
+          // kill the piece
+          candidateMoves.add([newRow, newCol]);
+        }
+        continue;
+      }
+      candidateMoves.add([newRow, newCol]);
+    }
+  }
+
+  void _movePawn(int row, int direction, int col,
+      List<List<int>> candidateMoves, ChessPiece piece) {
+    // PAWns can move one square forward
+    if (isInBoard(row + direction, col) &&
+        _board[row + direction][col] == null) {
+      candidateMoves.add([row + direction, col]);
+    }
+    // pawns can move 2 square forward if they are at initial position 6th row for black and 2nd row for whites
+    if ((row == 1 && !piece.isWhite) || (row == 6 && piece.isWhite)) {
+      if (isInBoard(row + 2 * direction, col) &&
+          _board[row + direction][col] == null &&
+          _board[row + 2 * direction][col] == null) {
+        candidateMoves.add([row + 2 * direction, col]);
+      }
+    }
+    // PAWNS can kill diagonally and take the space
+    if (isInBoard(row + direction, col + 1) &&
+        (_board[row + direction][col + 1] != null)) {
+      // take over the squar at that position
+      candidateMoves.add([row + direction, col + 1]);
+    }
+    if (isInBoard(row + direction, col - 1) &&
+        (_board[row + direction][col - 1] != null)) {
+      // take over the squar at that position
+      candidateMoves.add([row + direction, col - 1]);
+    }
+  }
+
+  void _moveBishop(
+      int row, int col, ChessPiece piece, List<List<int>> candidateMoves) {
+    {
+      const directions = [
+        [-1, -1], //up left
+        [-1, 1], //up right
+        [1, -1], //down left
+        [1, -1], //down right
+      ];
+      for (var direction in directions) {
+        int i = 1;
+        while (true) {
+          int newRow = row + i * direction[0];
+          int newCol = col + i * direction[1];
+
+          if (!isInBoard(newRow, newCol)) {
+            break;
+          }
+          if (_board[newRow][newCol] != null) {
+            if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
+              // kill the piece of the  opponent
+              candidateMoves.add([newRow, newCol]);
+              break;
+            } else {
+              // my own piece is blocking the rook because its the same color
+              break;
+            }
+          } else {
+            candidateMoves.add([newRow, newCol]);
+          }
+
+          i++;
+        }
+      }
+    }
   }
 
   @override
