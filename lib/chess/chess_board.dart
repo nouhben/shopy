@@ -93,6 +93,39 @@ class _ChessBoardState extends State<ChessBoard> {
         break;
 
       case ChessPieceType.bishop:
+        {
+          const directions = [
+            [-1, -1], //up left
+            [-1, 1], //up right
+            [1, -1], //down left
+            [1, -1], //down right
+          ];
+          for (var direction in directions) {
+            int i = 1;
+            while (true) {
+              int newRow = row + i * direction[0];
+              int newCol = col + i * direction[1];
+
+              if (!isInBoard(newRow, newCol)) {
+                break;
+              }
+              if (_board[newRow][newCol] != null) {
+                if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
+                  // kill the piece of the  opponent
+                  candidateMoves.add([newRow, newCol]);
+                  break;
+                } else {
+                  // my own piece is blocking the rook because its the same color
+                  break;
+                }
+              } else {
+                candidateMoves.add([newRow, newCol]);
+              }
+
+              i++;
+            }
+          }
+        }
         break;
       case ChessPieceType.rook:
         {
