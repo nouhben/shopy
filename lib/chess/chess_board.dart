@@ -90,8 +90,10 @@ class _ChessBoardState extends State<ChessBoard> {
           // take over the squar at that position
           candidateMoves.add([row + direction, col - 1]);
         }
+        break;
 
       case ChessPieceType.bishop:
+        break;
       case ChessPieceType.rook:
         {
           const directions = [
@@ -117,6 +119,9 @@ class _ChessBoardState extends State<ChessBoard> {
                 if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
                   // kill the piece of the  opponent
                   candidateMoves.add([newRow, newCol]);
+                } else {
+                  // my own piece is blocking the rook because its the same color
+                  break;
                 }
               } else {
                 candidateMoves.add([newRow, newCol]);
@@ -126,10 +131,39 @@ class _ChessBoardState extends State<ChessBoard> {
             }
           }
         }
-
+        break;
       case ChessPieceType.king:
+        break;
       case ChessPieceType.queen:
+        break;
       case ChessPieceType.knight:
+        const knightMoves = [
+          [-2, -1], // up 2 left 1
+          [-2, 1], // up 2 right 1
+          [-1, -2], // up 1 left 2
+          [-1, 2], // up 1 right 2
+
+          [1, -2], // down 1 left 2
+          [1, 2], // down 1 right 2
+          [2, -1], // down 2 left 1
+          [2, 1], // down 2 right 1
+        ];
+        for (var knightMove in knightMoves) {
+          int newRow = row + knightMove[0];
+          int newCol = col + knightMove[1];
+          if (!isInBoard(newRow, newCol)) {
+            continue;
+          }
+          if (_board[newRow][newCol] != null) {
+            if (piece.isWhite != _board[newRow][newCol]!.isWhite) {
+              // kill the piece
+              candidateMoves.add([newRow, newCol]);
+            }
+            continue;
+          }
+          candidateMoves.add([newRow, newCol]);
+        }
+
         break;
       default:
     }

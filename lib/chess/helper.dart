@@ -18,7 +18,7 @@ List<List<ChessPiece?>> initBorad() {
     ),
   );
   // the pawns
-  for (int i = 1; i < 8; i++) {
+  for (int i = 0; i < 8; i++) {
     newBoard[1][i] = ChessPiece(
       type: ChessPieceType.pawne,
       color: Colors.black,
