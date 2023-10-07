@@ -34,18 +34,22 @@ class _ChessBoardState extends State<ChessBoard> {
           _selectedRow = row;
           _selectedColumn = col;
         });
+        _validMoves = _calculateRawValidMoves(
+          _selectedRow,
+          _selectedColumn,
+          _selectedPiece,
+        );
       } else {
         setState(() {
           _selectedPiece = null;
           _selectedRow = -1;
           _selectedColumn = -1;
+          _validMoves = [];
         });
       }
-      _validMoves = _calculateRawValidMoves(
-        _selectedRow,
-        _selectedColumn,
-        _selectedPiece,
-      );
+    } else if (_selectedPiece != null &&
+        _validMoves.any((e) => row == e[0] && col == e[1])) {
+      _movePiece(row, col);
     }
   }
 
@@ -59,9 +63,8 @@ class _ChessBoardState extends State<ChessBoard> {
     //Direction direction =
     //piece!.color == Colors.white ? Direction.up : Direction.down;
     // we can use -1  for up and +1 for down
-
-    int direction = piece!.isWhite ? -1 : 1;
-    bool _isWhite = direction == -1;
+    if (piece == null) return [];
+    int direction = piece.isWhite ? -1 : 1;
 
     switch (piece.type) {
       case ChessPieceType.pawne:
@@ -88,6 +91,18 @@ class _ChessBoardState extends State<ChessBoard> {
       default:
     }
     return candidateMoves;
+  }
+
+  void _movePiece(int newRow, int newCol) {
+    // move piece to new row  and column and clear the old square then init the selcted data
+    _board[newRow][newCol] = _selectedPiece;
+    _board[_selectedRow][_selectedColumn] = null;
+    setState(() {
+      _selectedRow = -1;
+      _selectedColumn = -1;
+      _selectedPiece = null;
+      _validMoves = [];
+    });
   }
 
   void _moveKing(
@@ -248,12 +263,14 @@ class _ChessBoardState extends State<ChessBoard> {
     }
     // PAWNS can kill diagonally and take the space
     if (isInBoard(row + direction, col + 1) &&
-        (_board[row + direction][col + 1] != null)) {
+        (_board[row + direction][col + 1] != null) &&
+        (piece.isWhite != _board[row + direction][col + 1]!.isWhite)) {
       // take over the squar at that position
       candidateMoves.add([row + direction, col + 1]);
     }
     if (isInBoard(row + direction, col - 1) &&
-        (_board[row + direction][col - 1] != null)) {
+        (_board[row + direction][col - 1] != null) &&
+        (piece.isWhite != _board[row + direction][col - 1]!.isWhite)) {
       // take over the squar at that position
       candidateMoves.add([row + direction, col - 1]);
     }
