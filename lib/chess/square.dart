@@ -62,7 +62,8 @@ class ValidMoveDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
       width: 24.0,
       height: 24.0,
       decoration: const BoxDecoration(

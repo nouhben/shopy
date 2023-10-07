@@ -53,46 +53,44 @@ class _ChessBoardState extends State<ChessBoard> {
   List<List<int>> _calculateRawValidMoves(
     int row,
     int col,
-    ChessPiece? selctedPiece,
+    ChessPiece? piece,
   ) {
     List<List<int>> candidateMoves = [];
     //Direction direction =
-    //selctedPiece!.color == Colors.white ? Direction.up : Direction.down;
-    // we can use -1 one for up and 1 for down
+    //piece!.color == Colors.white ? Direction.up : Direction.down;
+    // we can use -1  for up and +1 for down
 
-    int direction = selctedPiece!.color == Colors.white ? -1 : 1;
+    int direction = piece!.isWhite ? -1 : 1;
     bool _isWhite = direction == -1;
 
-    switch (selctedPiece.type) {
+    switch (piece.type) {
       case ChessPieceType.pawne:
-        {
-          // PAWns can move one square forward
-          if (isInBoard(row + direction, col) &&
-              _board[row + direction][col] == null) {
-            candidateMoves.add([row + direction, col]);
-          }
-          // pawns can move 2 square forward if they are at initial position 6th row for black and 2nd row for whites
-          if ((row == 6 && direction == -1) || (row == 1 && direction == 1)) {
-            if (isInBoard(row + 2 * direction, col) &&
-                _board[row + direction][col] == null &&
-                _board[row + 2 * direction][col] == null) {
-              candidateMoves.add([row + 2 * direction, col]);
-            }
-          }
-          // PAWNS can kill diagonally and take the space
-          if (isInBoard(row + direction, col + 1) &&
-              (_board[row + direction][col + 1] != null) &&
-              _isWhite) {
-            // take over the squar at that position
-            candidateMoves.add([row + direction, col + 1]);
-          }
-          if (isInBoard(row + direction, col - 1) &&
-              (_board[row + direction][col - 1] != null) &&
-              _isWhite) {
-            // take over the squar at that position
-            candidateMoves.add([row + direction, col - 1]);
+
+        // PAWns can move one square forward
+        if (isInBoard(row + direction, col) &&
+            _board[row + direction][col] == null) {
+          candidateMoves.add([row + direction, col]);
+        }
+        // pawns can move 2 square forward if they are at initial position 6th row for black and 2nd row for whites
+        if ((row == 1 && !piece.isWhite) || (row == 6 && piece.isWhite)) {
+          if (isInBoard(row + 2 * direction, col) &&
+              _board[row + direction][col] == null &&
+              _board[row + 2 * direction][col] == null) {
+            candidateMoves.add([row + 2 * direction, col]);
           }
         }
+        // PAWNS can kill diagonally and take the space
+        if (isInBoard(row + direction, col + 1) &&
+            (_board[row + direction][col + 1] != null)) {
+          // take over the squar at that position
+          candidateMoves.add([row + direction, col + 1]);
+        }
+        if (isInBoard(row + direction, col - 1) &&
+            (_board[row + direction][col - 1] != null)) {
+          // take over the squar at that position
+          candidateMoves.add([row + direction, col - 1]);
+        }
+
       case ChessPieceType.bishop:
       case ChessPieceType.rook:
         {
@@ -112,13 +110,19 @@ class _ChessBoardState extends State<ChessBoard> {
               int newRow = row + i * direction[0];
               int newCol = col + i * direction[1];
 
-              if (!isInBoard(newRow, newCol)) break;
+              if (!isInBoard(newRow, newCol)) {
+                break;
+              }
               if (_board[newRow][newCol] != null) {
-                if (_isWhite != selctedPiece.isWhite) {
-                  // kill the piece of the black opponent
+                if (_board[newRow][newCol]!.isWhite != piece.isWhite) {
+                  // kill the piece of the  opponent
                   candidateMoves.add([newRow, newCol]);
                 }
+              } else {
+                candidateMoves.add([newRow, newCol]);
               }
+
+              i++;
             }
           }
         }
