@@ -18,9 +18,11 @@ class ChessPiece {
   final ChessPieceType type;
   final Color color;
   final String imagePath;
+  final bool isWhite;
   ChessPiece({
     required this.type,
     required this.color,
     required this.imagePath,
+    required this.isWhite,
   });
 }

@@ -95,6 +95,34 @@ class _ChessBoardState extends State<ChessBoard> {
         }
       case ChessPieceType.bishop:
       case ChessPieceType.rook:
+        {
+          const directions = [
+            //up
+            [-1, 0],
+            //down
+            [1, 0],
+            //left
+            [0, -1],
+            //right
+            [0, 1],
+          ];
+          for (var direction in directions) {
+            int i = 1;
+            while (true) {
+              int newRow = row + i * direction[0];
+              int newCol = col + i * direction[1];
+
+              if (!isInBoard(newRow, newCol)) break;
+              if (_board[newRow][newCol] != null) {
+                if (_isWhite != selctedPiece.isWhite) {
+                  // kill the piece of the black opponent
+                  candidateMoves.add([newRow, newCol]);
+                }
+              }
+            }
+          }
+        }
+
       case ChessPieceType.king:
       case ChessPieceType.queen:
       case ChessPieceType.knight:
@@ -126,7 +154,7 @@ class _ChessBoardState extends State<ChessBoard> {
             }
           }
           return Square(
-            isWhite: isWhite(index),
+            isWhite: isSquareWhite(index),
             piece: piece,
             isValidMove: isValidMove, //_validMoves.contains([row, column]),
             isSelected: _selectedRow == row && _selectedColumn == column,
